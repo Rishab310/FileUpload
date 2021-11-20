@@ -1,23 +1,27 @@
-import logo from './logo.svg';
 import './App.css';
 
+import {useState} from 'react';
+import {storage} from './firebase';
+import { ref, uploadBytes } from "firebase/storage";
+
 function App() {
+  const [image , setImage] = useState({});
+  const upload = ()=>{
+    if(image == null)
+      return;
+    uploadBytes(ref(storage, `images/${image.name}`), image).then((snapshot) => {
+      alert("Successfully uploaded!!");
+      console.log('Uploaded a blob or file!');
+      console.log(snapshot);
+    })
+    .catch((err)=> console.log(err))
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div style={{margin:"auto", marginTop:"100px"}}>
+      <input type="file" onChange={(e)=>{setImage(e.target.files[0])}}/>
+      <button onClick={upload}>Upload</button>
+      </div>
     </div>
   );
 }
